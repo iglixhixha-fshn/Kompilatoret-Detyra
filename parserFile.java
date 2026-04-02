@@ -151,7 +151,7 @@ public class parserFile {
 
     static void exec(Instruction instr) {
 
-        // komandat e ekzekutimit
+        //komandat e ekzekutimit
 
     }
 
