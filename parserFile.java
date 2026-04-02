@@ -164,7 +164,36 @@ public class parserFile {
     // formatNumber - Nese numri eshte i plote, afishimi duhet bere pa .0 ne fund,
     // pasi ruhet si double
 
-    // Ketu do te vendosen funksionet ndihmese
+   private static void ensureDefined(String name) {
+    if (!variables.containsKey(name))
+        throw new RuntimeException(
+    "Gabim: Variabla '" + name +
+    "' nuk eshte deklaruar para perdorimit te saj.");
+}
+
+private static boolean isValidIdentifier(String s) {
+    if (s == null || s.isEmpty()) return false;
+    if (!Character.isLetter(s.charAt(0)) && s.charAt(0) != '_') return false;
+    for (char c : s.toCharArray())
+        if (!Character.isLetterOrDigit(c) && c != '_') return false;
+    return true;
+}
+
+private static double resolveOperand(String token) {
+    try {
+        return Double.parseDouble(token);
+    } catch (NumberFormatException e) {
+        //Sigurojme referencen e variablit
+        ensureDefined(token);
+        return variables.get(token);
+    }
+}
+
+private static String formatNumber(double val) {
+    if (val == Math.floor(val) && !Double.isInfinite(val))
+        return String.valueOf((long) val);
+    return String.valueOf(val);
+}
 
     public static void main(String[] args) {
         String filename = "input.gg";
