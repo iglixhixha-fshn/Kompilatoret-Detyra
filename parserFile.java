@@ -177,6 +177,7 @@ public class parserFile {
         break;
     }
 
+    
     //Rreshti i deklarimit ose veprimeve aritmetike
     case ASSIGN: {
         double leftVal = resolveOperand(instr.exprLeft);
