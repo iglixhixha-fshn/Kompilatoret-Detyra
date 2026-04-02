@@ -51,7 +51,45 @@ public class parserFile {
     static Instruction parse(String line) {
 
         //Komandat parse - duhen vendosur ketu dy pjeset
+//pjesa e pare e komandave parse - ky koment duhet fshire
 
+//Nese rreshti permban #, do te jete nje koment
+int hashIndex = line.indexOf('#');
+if (hashIndex >= 0) line = line.substring(0, hashIndex);
+line = line.trim();
+
+if (line.isEmpty()) {
+    return new Instruction();
+}
+
+String[] tokens = line.split("\\s+");
+String keyword  = tokens[0];
+
+//Nese rreshti permban afisho, do behet instruksioni i afishimit
+if (keyword.equalsIgnoreCase("afisho")) {
+    if (tokens.length < 2)
+        throw new RuntimeException(
+            "Sintaksa gabim: 'afisho' kerkon saktesisht nje argument. " +
+            "Shembull: afisho x");
+    if (tokens.length > 2)
+        throw new RuntimeException(
+            "Sintaksa gabim: 'afisho' merr vetem nje argument, jo " +
+            (tokens.length - 1) + ".");
+    return new Instruction(InstrType.PRINT, tokens[1]);
+}
+
+//Nese rreshti permban lexo, do behet instruksioni i leximit
+if (keyword.equalsIgnoreCase("lexo")) {
+    if (tokens.length < 2)
+        throw new RuntimeException(
+            "Sintaksa gabim: 'lexo' kerkon saktesisht nje argument. " +
+            "Shembull: lexo x");
+    if (tokens.length > 2)
+        throw new RuntimeException(
+            "Sintaksa gabim: 'lexo' merr vetem nje argument (emrin e variablit), " +
+            "jo " + (tokens.length - 1) + ".");
+    return new Instruction(InstrType.READ, tokens[1]);
+}
         //Ne rast se nuk gjendet nje komande e vlefshme
         throw new RuntimeException(
             "Sintaksa gabim: Rreshti '" + line +
