@@ -3,7 +3,7 @@ import java.util.*;
 
 public class parserFile {
     enum InstrType {
-        ASSIGN, // var = expr
+        ASSIGN, // deklarime/veprime
         PRINT, // afishimi
         READ, // leximi
         EMPTY // rreshta bosh/ komente
@@ -49,9 +49,6 @@ public class parserFile {
     private static final Scanner keyboard = new Scanner(System.in);
 
     static Instruction parse(String line) {
-
-        // Komandat parse - duhen vendosur ketu dy pjeset
-        // pjesa e pare e komandave parse - ky koment duhet fshire
 
         // Nese rreshti permban #, do te jete nje koment
         int hashIndex = line.indexOf('#');
@@ -152,74 +149,74 @@ public class parserFile {
     static void exec(Instruction instr) {
 
         switch (instr.type) {
-    //Rreshti bosh ose komenti
-    case EMPTY:
-        break;
+            //Rreshti bosh ose komenti
+            case EMPTY:
+                break;
 
-    //Rreshti i afishimit
-    case PRINT: {
-        ensureDefined(instr.target);
-        double val = variables.get(instr.target);
-        System.out.println(instr.target + " = " + formatNumber(val));
-        break;
-    }
+            //Rreshti i afishimit
+            case PRINT: {
+                ensureDefined(instr.target);
+                double val = variables.get(instr.target);
+                System.out.println(instr.target + " = " + formatNumber(val));
+                break;
+            }
 
-    //Rreshti i leximit
-    case READ: {
-        System.out.print("Jep vleren per '" + instr.target + "': ");
-        while (!keyboard.hasNextDouble()) {
-            System.out.println("  Gabim: Duhet te jete nje numer. Provo perseri.");
-            System.out.print("Jep vleren per '" + instr.target + "': ");
-            keyboard.next();
-        }
-        double val = keyboard.nextDouble();
-        variables.put(instr.target, val);
-        break;
-    }
+            //Rreshti i leximit
+            case READ: {
+                System.out.print("Jep vleren per '" + instr.target + "': ");
+                while (!keyboard.hasNextDouble()) {
+                    System.out.println("  Gabim: Duhet te jete nje numer. Provo perseri.");
+                    System.out.print("Jep vleren per '" + instr.target + "': ");
+                    keyboard.next();
+                }
+                double val = keyboard.nextDouble();
+                variables.put(instr.target, val);
+                break;
+            }
 
-    
-    //Rreshti i deklarimit ose veprimeve aritmetike
-    case ASSIGN: {
-        double leftVal = resolveOperand(instr.exprLeft);
+            
+            //Rreshti i deklarimit ose veprimeve aritmetike
+            case ASSIGN: {
+                double leftVal = resolveOperand(instr.exprLeft);
 
-        double result;
-        if (instr.operator == null) {
-            result = leftVal;
-        } else {
-            double rightVal = resolveOperand(instr.exprRight);
+                double result;
+                if (instr.operator == null) {
+                    result = leftVal;
+                } else {
+                    double rightVal = resolveOperand(instr.exprRight);
 
-            switch (instr.operator) {
-                case "+": result = leftVal + rightVal; break;
-                case "-": result = leftVal - rightVal; break;
-                case "*": result = leftVal * rightVal; break;
-                case "/":
-                    if (rightVal == 0.0)
-                        throw new RuntimeException(
-                            "Gabim matematik: Pjesetim me zero -- " +
-                            instr.target + " = " + instr.exprLeft +
-                            " / " + instr.exprRight + ".");
-                    result = leftVal / rightVal;
-                    break;
-                default:
-                    throw new RuntimeException(
-                        "Operator i panjohur: '" + instr.operator + "'.");
+                    switch (instr.operator) {
+                        case "+": result = leftVal + rightVal; break;
+                        case "-": result = leftVal - rightVal; break;
+                        case "*": result = leftVal * rightVal; break;
+                        case "/":
+                            if (rightVal == 0.0)
+                                throw new RuntimeException(
+                                    "Gabim matematik: Pjesetim me zero -- " +
+                                    instr.target + " = " + instr.exprLeft +
+                                    " / " + instr.exprRight + ".");
+                            result = leftVal / rightVal;
+                            break;
+                        default:
+                            throw new RuntimeException(
+                                "Operator i panjohur: '" + instr.operator + "'.");
+                    }
+                }
+
+                variables.put(instr.target, result);
+                break;
             }
         }
-
-        variables.put(instr.target, result);
-        break;
-    }
-}
     }
 
     // Funksione ndihmese per disa raste:
-    // ensureDefined - Duhet kontrolluar nese variabli i kerkuar eshte inicializuar
-    // isValidIdentifier - Duhet kontrolluar nese emri i vairablave eshte i sakte
-    // - Duhet te nisi me nje shkronje ose mund te lejojme edhe _
-    // - Me pas pjesa tjeter e karaktereve mund te permbaje shkronja, numra, _
-    // resolveOperand - Pasi numrat lexohen, duhen konvertuar nga string ne double
-    // formatNumber - Nese numri eshte i plote, afishimi duhet bere pa .0 ne fund,
-    // pasi ruhet si double
+    // 1. ensureDefined - Duhet kontrolluar nese variabli i kerkuar eshte inicializuar
+    // 2. isValidIdentifier - Duhet kontrolluar nese emri i vairablave eshte i sakte
+    //                   - Duhet te nisi me nje shkronje ose mund te lejojme edhe _
+    //                   - Me pas pjesa tjeter e karaktereve mund te permbaje shkronja, numra, _
+    // 3. resolveOperand - Pasi numrat lexohen, duhen konvertuar nga string ne double
+    // 4. ormatNumber - Nese numri eshte i plote, afishimi duhet bere pa .0 ne fund,
+    //                - pasi ruhet si double
 
    private static void ensureDefined(String name) {
     if (!variables.containsKey(name))
