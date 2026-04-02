@@ -1,0 +1,24 @@
+# Ketu kemi disa shembuj veprimesh
+
+# Deklarim dhe caktimi i variablave
+a = 2
+b = 3
+
+# Operacione aritmetike
+c = a + b
+d = a - b
+e = a * b
+f = b / a
+
+# Shfaq rezultatet
+afisho a
+afisho b
+afisho c
+afisho d
+afisho e
+afisho f
+
+# Testimi me vlera nga tastiera
+lexo x
+z = x + a
+afisho z
