@@ -151,8 +151,64 @@ public class parserFile {
 
     static void exec(Instruction instr) {
 
-        //komandat e ekzekutimit
+        switch (instr.type) {
+    //Rreshti bosh ose komenti
+    case EMPTY:
+        break;
 
+    //Rreshti i afishimit
+    case PRINT: {
+        ensureDefined(instr.target);
+        double val = variables.get(instr.target);
+        System.out.println(instr.target + " = " + formatNumber(val));
+        break;
+    }
+
+    //Rreshti i leximit
+    case READ: {
+        System.out.print("Jep vleren per '" + instr.target + "': ");
+        while (!keyboard.hasNextDouble()) {
+            System.out.println("  Gabim: Duhet te jete nje numer. Provo perseri.");
+            System.out.print("Jep vleren per '" + instr.target + "': ");
+            keyboard.next();
+        }
+        double val = keyboard.nextDouble();
+        variables.put(instr.target, val);
+        break;
+    }
+
+    //Rreshti i deklarimit ose veprimeve aritmetike
+    case ASSIGN: {
+        double leftVal = resolveOperand(instr.exprLeft);
+
+        double result;
+        if (instr.operator == null) {
+            result = leftVal;
+        } else {
+            double rightVal = resolveOperand(instr.exprRight);
+
+            switch (instr.operator) {
+                case "+": result = leftVal + rightVal; break;
+                case "-": result = leftVal - rightVal; break;
+                case "*": result = leftVal * rightVal; break;
+                case "/":
+                    if (rightVal == 0.0)
+                        throw new RuntimeException(
+                            "Gabim matematik: Pjesetim me zero -- " +
+                            instr.target + " = " + instr.exprLeft +
+                            " / " + instr.exprRight + ".");
+                    result = leftVal / rightVal;
+                    break;
+                default:
+                    throw new RuntimeException(
+                        "Operator i panjohur: '" + instr.operator + "'.");
+            }
+        }
+
+        variables.put(instr.target, result);
+        break;
+    }
+}
     }
 
     // Funksione ndihmese per disa raste:
